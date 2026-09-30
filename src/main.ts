@@ -26,10 +26,11 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Products & Inventory API')
     .setDescription(
-      'Robust NestJS REST CRUD API for Inventory and Product Management featuring SQLite, TypeORM, and input validation.',
+      'Robust NestJS REST CRUD API for Inventory, Product Management, and Order Checkout featuring SQLite, TypeORM, and input validation.',
     )
-    .setVersion('1.0')
+    .setVersion('1.1')
     .addTag('Products', 'CRUD operations for product inventory items')
+    .addTag('Orders', 'Order placement, checkout, status management, and sales analytics')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

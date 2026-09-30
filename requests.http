@@ -1,6 +1,10 @@
 ### Variables
 @baseUrl = http://localhost:3000
 
+###############################################################################
+# PRODUCTS API
+###############################################################################
+
 ### 1. Get All Products (Default Pagination)
 GET {{baseUrl}}/products HTTP/1.1
 
@@ -25,7 +29,7 @@ Content-Type: application/json
   "isActive": true
 }
 
-### 5. Get Product By ID (Replace with actual ID from create response)
+### 5. Get Product By ID (Replace with actual ID)
 @productId = {{createProduct.response.body.id}}
 GET {{baseUrl}}/products/{{productId}} HTTP/1.1
 
@@ -40,3 +44,58 @@ Content-Type: application/json
 
 ### 7. Delete Product
 DELETE {{baseUrl}}/products/{{productId}} HTTP/1.1
+
+
+###############################################################################
+# ORDERS & CHECKOUT API
+###############################################################################
+
+### 8. Place an Order (Checkout with Stock Deduction)
+# @name createOrder
+POST {{baseUrl}}/orders HTTP/1.1
+Content-Type: application/json
+
+{
+  "customerName": "Jane Doe",
+  "customerEmail": "jane.doe@example.com",
+  "shippingAddress": "742 Evergreen Terrace, Springfield, OR",
+  "notes": "Leave at front porch",
+  "items": [
+    {
+      "productId": "{{productId}}",
+      "quantity": 2
+    }
+  ]
+}
+
+### 9. Get All Orders (Paginated & Filterable)
+GET {{baseUrl}}/orders?page=1&limit=10&sortBy=createdAt&sortOrder=DESC HTTP/1.1
+
+### 10. Filter Orders by Status
+GET {{baseUrl}}/orders?status=PENDING HTTP/1.1
+
+### 11. Search Orders
+GET {{baseUrl}}/orders?search=Jane HTTP/1.1
+
+### 12. Get Order & Sales Analytics (Revenue, AOV, Top Sellers)
+GET {{baseUrl}}/orders/analytics HTTP/1.1
+
+### 13. Get Order By ID / Order Number
+@orderId = {{createOrder.response.body.id}}
+GET {{baseUrl}}/orders/{{orderId}} HTTP/1.1
+
+### 14. Update Order Status (e.g. PROCESSING, COMPLETED)
+PATCH {{baseUrl}}/orders/{{orderId}}/status HTTP/1.1
+Content-Type: application/json
+
+{
+  "status": "PROCESSING"
+}
+
+### 15. Cancel Order (Automatically restores product inventory stock)
+POST {{baseUrl}}/orders/{{orderId}}/cancel HTTP/1.1
+Content-Type: application/json
+
+{
+  "reason": "Customer requested order cancellation before dispatch"
+}
